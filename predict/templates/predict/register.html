@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            background: linear-gradient(135deg, rgba(127, 197, 255, 1), rgba(255, 255, 255, 1));
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .register-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .register-container label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+
+        .register-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .register-container input[type="submit"] {
+            background-color: #253ab3;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        .register-container input[type="submit"]:hover {
+            background-color: #214d7e;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Đăng ký tài khoản mới</h2>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="POST" action="{% url 'processregister' %}">
+        {% csrf_token %}
+        <label for="username">Tên đăng nhập:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Mật khẩu:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="password2">Nhập lại mật khẩu:</label>
+        <input type="password" id="password2" name="password2" required>
+
+        <input type="submit" value="Đăng ký">
+    </form>
+    {% if form.errors %}
+        <div class="error">
+            <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

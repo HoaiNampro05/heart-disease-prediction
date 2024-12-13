@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ</title>
+    <style>
+       body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, rgba(127, 197, 255, 1), rgba(255, 255, 255, 1));
+        background-size: cover;
+        background-position: center;
+        margin: 0;
+        padding: 0;
+    }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .btn-container {
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #2d62f5;
+        }
+
+        .btn-secondary:hover {
+            background-color: #143a74;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chào mừng bạn đến với Trang Chủ</h1>
+        <p>Hãy đăng ký hoặc đăng nhập để tạo bài viết và khám phá thêm nhiều tính năng khác.</p>
+        
+        <div class="btn-container">
+            <a href="{% url 'startregister' %}" class="btn btn-secondary">Đăng ký</a>
+            <a href="{% url 'startlogin' %}" class="btn">Đăng nhập</a>
+        </div>
+    </div>
+</body>
+</html>
