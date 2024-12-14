@@ -116,7 +116,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# settings.py
+
+# Đường dẫn URL cho các file tĩnh
+STATIC_URL = '/static/'
+
+# Các thư mục chứa file tĩnh của dự án
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Thư mục chứa các file tĩnh của dự án
+]
+
+# Thư mục thu thập file tĩnh khi chạy lệnh collectstatic
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
