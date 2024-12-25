@@ -1,118 +1,104 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import User,Post
-from django.contrib import messages
+from django.shortcuts import render
+from django.http import JsonResponse
+from . import cnn_model
+import numpy as np
+import os
 
-# Create your views here.
-def home(request):
-    return render(request,'predict/home.html')
+means = np.array([
+    5.44389439e+01, 6.79867987e-01, 3.15841584e+00, 1.31689769e+02,
+    2.46693069e+02, 1.48514851e-01, 9.90099010e-01, 1.49607261e+02,
+    3.26732673e-01, 1.03960396e+00, 1.60066007e+00, 6.72240803e-01,
+    4.73421927e+00
+])
+std_devs = np.array([
+    9.02373483, 0.46652707, 0.95853994, 17.57068124, 51.69140647, 0.3556096,
+    0.99332807, 22.83722455, 0.46901859, 1.15915747, 0.61520843, 0.9296715,
+    1.93007938
+])
+explanation_dict = {
+    "sex": {0: "Female (Nữ)", 1: "Male (Nam)"},
+    "Chest Pain Type": {
+        0: "Typical Angina (Đau thắt ngực điển hình)",
+        1: "Atypical Angina (Đau thắt ngực không điển hình)",
+        2: "Non-Anginal Pain (Không đau thắt ngực)",
+        3: "Asymptomatic (Không có triệu chứng)",
+    },
+    "Fasting Blood Sugar > 120 mg/dl": {
+        0: "False (≤ 120 mg/dl)",
+        1: "True (> 120 mg/dl)",
+    },
+    "Resting ECG": {
+        0: "Normal (Bình thường)",
+        1: "ST-T wave abnormality (Bất thường sóng ST-T)",
+        2: "Left ventricular hypertrophy (Phì đại thất trái)",
+    },
+    "Exercise Induced Angina": {
+        0: "No (Không đau thắt ngực do gắng sức)",
+        1: "Yes (Có đau thắt ngực do gắng sức)",
+    },
+    "Slope of the ST Segment": {
+        0: "Upsloping (Dốc lên)",
+        1: "Flat (Phẳng)",
+        2: "Downsloping (Dốc xuống)",
+    },
+    "Thalassemia": {
+        1: "Normal (Bình thường)",
+        2: "Fixed Defect (Khuyết điểm cố định)",
+        3: "Reversible Defect (Khuyết điểm có thể đảo ngược)",
+    },
+}
 
-def startRegister(request):
-    return render(request,'predict/register.html')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(current_dir, 'models', 'best_model.pth')
+model = cnn_model.CNN_model()
+model.load_best_model(model_path)
+def standard_data(x):
+    return (x - means) / std_devs
 
-def startLogin(request):
-    return render(request,'predict/login.html')
+def access(request):
+    return render(request, "predict/input.html")
 
-def startAddPost(request):
-   # print("da vao startaddpost")
-    if request.method == 'POST':
-        context = {'username': request.session.get('user_name'),'user_id': request.session.get('user_id')}
-        return render(request,'predict/addpost.html',context)
-
-def processRegister(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        password2 = request.POST['password2']
-       
-        # Kiểm tra mật khẩu có trùng khớp không
-        if password == password2:
-            # Kiểm tra xem username có tồn tại hay không
-            if User.objects.filter(username=username).exists():
-                print("ok1")
-                messages.error(request, 'Tên đăng nhập đã tồn tại.')
-            # Kiểm tra xem email đã được sử dụng hay chưa
-            elif User.objects.filter(email=email).exists():
-                messages.error(request, 'Email đã được sử dụng.')
-            else:
-                # Tạo user mới
-                user = User(username=username, email=email, password=password)
-                #user=User.objects.create_user(username=username, email=email, password=password)
-                user.save()
-                messages.success(request, 'Tài khoản đã được tạo thành công!')
-                return render(request,'predict/home.html')
-        else:
-            messages.error(request, 'Mật khẩu không trùng khớp.')
-    
-    return render(request, 'predict/register.html')
-
-def processLogin(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        print(username,password,"dâdsada")
-        # Xác thực người dùng
-        #user = authenticate(request, username=username, password=password)
-        user=None
+def predict_heart_disease(request):
+    if request.method == "POST":
         try:
-            user = User.objects.get(username=username)
-            if user != None and user.password==password:
-                request.session['user_id'] = user.id  # Lưu user_id vào session
-                request.session['user_name'] = user.username
-                posts = Post.objects.filter(user_id=user.id)
-                print(len(posts))
-                context={'username':request.session.get('user_name'),'user_id':request.session.get('user_id'),"posts":posts}
-                return render(request,'predict/userhome.html',context)
-            return render(request, 'predict/login.html')
-        except:
-            return render(request, 'predict/login.html') 
-    else:
-        return render(request, 'predict/login.html')
+            # Lấy dữ liệu từ form
+            form_data = {
+                "age": int(request.POST.get("age")),
+                "sex": int(request.POST.get("sex")),
+                "Chest Pain Type": int(request.POST.get("cp")),
+                "Resting Blood Pressure": int(request.POST.get("trestbps")),
+                "Cholesterol": int(request.POST.get("chol")),
+                "Fasting Blood Sugar > 120 mg/dl": int(request.POST.get("fbs")),
+                "Resting ECG": int(request.POST.get("restecg")),
+                "Max Heart Rate Achieved": int(request.POST.get("thalach")),
+                "Exercise Induced Angina": int(request.POST.get("exang")),
+                "ST Depression": float(request.POST.get("oldpeak")),
+                "Slope of the ST Segment": int(request.POST.get("slope")),
+                "Number of Major Vessels Colored": int(request.POST.get("ca")),
+                "Thalassemia": int(request.POST.get("thal"))
+            }
+
+            # Chuẩn bị dữ liệu đầu vào
+            input_data = np.array([[form_data[key] for key in form_data]])
+            input_data = standard_data(input_data)  # Hàm chuẩn hóa dữ liệu
+            for key, value in form_data.items():
+                if key in explanation_dict:
+                    form_data[key] = explanation_dict[key].get(value, value)
+            #print(form_data)
+            # Dự đoán kết quả
+            result = model.predict(input_data)
+            result=f"{result * 100:.2f}%"
 
 
+            # Render kết quả ra output.html
+            return render(request, "predict/output.html", {
+                "prediction": result,
+                "form_data": form_data
+            })
 
+        except Exception as e:
+            # Xử lý lỗi và hiển thị thông báo
+            return render(request, "predict/output.html", {"error": str(e)})
 
-# def addPost(request):
-#     if request.method =='POST':
-#         title = request.POST.get('title')
-#         content = request.POST.get('content')
-#         user = User.objects.get(id=request.session.get('user_id'))
-#         post = Post.objects.create(user=user, title=title, content=content)
-#         post.save()
-#         posts = Post.objects.filter(user_id=request.session.get('user_id'))
-#         context={'username':request.session.get('user_name'),'user_id':request.session.get('user_id'),"posts":posts}
-#         return render(request,'predict/userhome.html',context)
-#     return render(request, 'predict/userhome.html', context)
-
-def userHome(request):
-    posts = Post.objects.filter(user_id=request.session.get('user_id'))
-    context = {
-        'username': request.session.get('user_name'),
-        'user_id': request.session.get('user_id'),
-        "posts": posts
-    }
-    return render(request, 'predict/userhome.html', context)
-
-
-def addPost(request):
-    if request.method == 'POST':
-        # Lấy dữ liệu từ form
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        user = User.objects.get(id=request.session.get('user_id'))
-        
-        # Tạo post mới
-        post = Post.objects.create(user=user, title=title, content=content)
-        
-        # Chuyển hướng đến trang userhome sau khi xử lý POST
-        return redirect('user_home')  # Chuyển hướng tới trang userhome bằng tên URL pattern
-
-    # Yêu cầu GET hoặc sau khi chuyển hướng từ POST
-    posts = Post.objects.filter(user_id=request.session.get('user_id'))
-    context = {
-        'username': request.session.get('user_name'),
-        'user_id': request.session.get('user_id'),
-        "posts": posts
-    }
-    return render(request, 'predict/userhome.html', context)
+    # Nếu không phải POST, render input form
+    return render(request, "predict/input.html")
