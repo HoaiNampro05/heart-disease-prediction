@@ -122,12 +122,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Các thư mục chứa file tĩnh của dự án
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Thư mục chứa các file tĩnh của dự án
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',  # Thư mục chứa các file tĩnh của dự án
+# ]
 
-# Thư mục thu thập file tĩnh khi chạy lệnh collectstatic
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# # Thư mục thu thập file tĩnh khi chạy lệnh collectstatic
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Default primary key field type

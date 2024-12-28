@@ -16,7 +16,7 @@ std_devs = np.array([
     1.93007938
 ])
 explanation_dict = {
-    "Giới tính": {0: "Female (Nữ)", 1: "Male (Nam)"},
+    "Giới tính": {0: "Nữ", 1: "Nam"},
     "Loại đau ngực": {
         0: "Đau ngực điển hình",
         1: "Đau ngực không điển hình ",
