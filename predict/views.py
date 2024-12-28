@@ -16,35 +16,35 @@ std_devs = np.array([
     1.93007938
 ])
 explanation_dict = {
-    "sex": {0: "Female (Nữ)", 1: "Male (Nam)"},
-    "Chest Pain Type": {
-        0: "Typical Angina (Đau thắt ngực điển hình)",
-        1: "Atypical Angina (Đau thắt ngực không điển hình)",
-        2: "Non-Anginal Pain (Không đau thắt ngực)",
-        3: "Asymptomatic (Không có triệu chứng)",
+    "Giới tính": {0: "Female (Nữ)", 1: "Male (Nam)"},
+    "Loại đau ngực": {
+        0: "Đau ngực điển hình",
+        1: "Đau ngực không điển hình ",
+        2: "Không phải đau thắt ngực",
+        3: "Không có triệu chứng",
     },
-    "Fasting Blood Sugar > 120 mg/dl": {
-        0: "False (≤ 120 mg/dl)",
-        1: "True (> 120 mg/dl)",
+    "Lượng glucose huyết tương lúc đói >120mg/dl": {
+        0: "Không (≤ 120 mg/dl)",
+        1: "Đúng (> 120 mg/dl)",
     },
-    "Resting ECG": {
-        0: "Normal (Bình thường)",
-        1: "ST-T wave abnormality (Bất thường sóng ST-T)",
-        2: "Left ventricular hypertrophy (Phì đại thất trái)",
+    "Kết quả đo điện tâm đồ lúc nghỉ ngơi": {
+        0: "Bình thường",
+        1: "Có bất thường sóng ST-T ",
+        2: "Có dấu hiệu phì đại thất trái ",
     },
-    "Exercise Induced Angina": {
-        0: "No (Không đau thắt ngực do gắng sức)",
-        1: "Yes (Có đau thắt ngực do gắng sức)",
+    "Đau ngực lúc vận động": {
+        0: "Có ",
+        1: "Không ",
     },
-    "Slope of the ST Segment": {
-        0: "Upsloping (Dốc lên)",
-        1: "Flat (Phẳng)",
-        2: "Downsloping (Dốc xuống)",
+    "Sự thay đổi đoạn ST vận động": {
+        0: "Dốc lên ",
+        1: "Phẳng",
+        2: "Dốc xuống",
     },
-    "Thalassemia": {
-        1: "Normal (Bình thường)",
-        2: "Fixed Defect (Khuyết điểm cố định)",
-        3: "Reversible Defect (Khuyết điểm có thể đảo ngược)",
+    "Xạ hình tưới máu cơ tim": {
+        1: "Bình thường",
+        2: "Khiếm khuyết cố định",
+        3: "Khiếm khuyết có hồi phục",
     },
 }
 
@@ -63,19 +63,19 @@ def predict_heart_disease(request):
         try:
             # Lấy dữ liệu từ form
             form_data = {
-                "age": int(request.POST.get("age")),
-                "sex": int(request.POST.get("sex")),
-                "Chest Pain Type": int(request.POST.get("cp")),
-                "Resting Blood Pressure": int(request.POST.get("trestbps")),
-                "Cholesterol": int(request.POST.get("chol")),
-                "Fasting Blood Sugar > 120 mg/dl": int(request.POST.get("fbs")),
-                "Resting ECG": int(request.POST.get("restecg")),
-                "Max Heart Rate Achieved": int(request.POST.get("thalach")),
-                "Exercise Induced Angina": int(request.POST.get("exang")),
-                "ST Depression": float(request.POST.get("oldpeak")),
-                "Slope of the ST Segment": int(request.POST.get("slope")),
-                "Number of Major Vessels Colored": int(request.POST.get("ca")),
-                "Thalassemia": int(request.POST.get("thal"))
+                "Tuổi": int(request.POST.get("age")),
+                "Giới tính": int(request.POST.get("sex")),
+                "Loại đau ngực": int(request.POST.get("cp")),
+                "Huyết áp lúc nghỉ ngơi (mm Hg)": int(request.POST.get("trestbps")),
+                "Nồng độ cholesterol đo được trong huyết thanh (mg/dl)": int(request.POST.get("chol")),
+                "Lượng glucose huyết tương lúc đói >120mg/dl": int(request.POST.get("fbs")),
+                "Kết quả đo điện tâm đồ lúc nghỉ ngơi": int(request.POST.get("restecg")),
+                "Nhịp tim lớn nhất đo được": int(request.POST.get("thalach")),
+                "Đau ngực lúc vận động": int(request.POST.get("exang")),
+                "Đoạn ST chênh xuống do vận động so với lúc nghỉ ngơi": float(request.POST.get("oldpeak")),
+                "Sự thay đổi đoạn ST vận động": int(request.POST.get("slope")),
+                "Số lượng mạch chính phát hiện bởi nội soi huỳnh quang mạch vành": int(request.POST.get("ca")),
+                "Xạ hình tưới máu cơ tim": int(request.POST.get("thal"))
             }
 
             # Chuẩn bị dữ liệu đầu vào

@@ -69,7 +69,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Prediction Result</h2>
+        <h2>Kết quả dự đoán</h2>
 
         {% if error %}
             <div class="error">{{ error }}</div>
@@ -91,10 +91,10 @@
                 </tbody>
             </table>
 
-            <div class="result">Prediction: {{ prediction }}</div>
+            <div class="result">Nguy cơ mắc bệnh tim của bạn là: {{ prediction }}</div>
 
             <!-- Try Again button placed below the prediction -->
-            <a href="{% url 'access' %}" class="try-again">Try again</a>
+            <a href="{% url 'access' %}" class="try-again">Thử lại</a>
         {% endif %}
     </div>
 </body>
